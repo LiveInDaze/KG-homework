@@ -29,19 +29,19 @@ def clear_db(tx):
 def create_constraints(tx):
     # 分别尝试创建约束，如果已存在则忽略错误
     try:
-        tx.run("CREATE CONSTRAINT ON (p:作品) ASSERT p.name IS UNIQUE")
+        tx.run("CREATE CONSTRAINT work_name_unique IF NOT EXISTS FOR (p:作品) REQUIRE p.name IS UNIQUE")
     except Exception as e:
         if "already exists" not in str(e) and "ConstraintAlreadyExists" not in str(e):
             raise e
 
     try:
-        tx.run("CREATE CONSTRAINT ON (a:专辑) ASSERT a.name IS UNIQUE")
+        tx.run("CREATE CONSTRAINT album_name_unique IF NOT EXISTS FOR (a:专辑) REQUIRE a.name IS UNIQUE")
     except Exception as e:
         if "already exists" not in str(e) and "ConstraintAlreadyExists" not in str(e):
             raise e
 
     try:
-        tx.run("CREATE CONSTRAINT ON (p:人物) ASSERT p.name IS UNIQUE")
+        tx.run("CREATE CONSTRAINT person_name_unique IF NOT EXISTS FOR (p:人物) REQUIRE p.name IS UNIQUE")
     except Exception as e:
         if "already exists" not in str(e) and "ConstraintAlreadyExists" not in str(e):
             raise e

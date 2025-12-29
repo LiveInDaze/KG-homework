@@ -3,6 +3,9 @@ import subprocess
 import sys
 import re
 
+# 可配置的模型名称，便于切换不同 Ollama 模型
+MODEL_NAME = "deepseek-r1:8b"
+
 def call_llm(question: str) -> str:
     q = question.strip()
     if not q.endswith(('?', '？', '.', '。', '!', '！')):
@@ -13,7 +16,7 @@ def call_llm(question: str) -> str:
     try:
         # 使用 ollama run 直接调用（绕过 HTTP API）
         result = subprocess.run(
-            ["ollama", "run", "qwen2.5:1.5b", prompt],
+            ["ollama", "run", MODEL_NAME, prompt],
             capture_output=True,
             text=True,
             timeout=90,
