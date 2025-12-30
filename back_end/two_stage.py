@@ -35,7 +35,7 @@ def two_stage_qa(question: str):
         # 方法1: 原始字符串匹配（保留兼容性）
         if llm_ans in kg_set:
             return {
-                "final_answer": llm_ans,
+                "final_answer": kg_answers,
                 "source": "verified_by_kg_string",
                 "llm_answer": llm_ans,
                 "kg_answers": kg_answers,
@@ -67,7 +67,7 @@ def two_stage_qa(question: str):
                     if str(kg_ans).lower() in matched_entities or matched_entity_original in str(kg_ans):
                         print(f"【实体匹配成功】LLM实体 '{matched_entity_original}' 与KG结果 '{kg_ans}' 匹配")
                         return {
-                            "final_answer": kg_ans,
+                            "final_answer": kg_answers,
                             "source": "verified_by_kg_entity",
                             "llm_answer": llm_ans,
                             "kg_answers": kg_answers,
@@ -78,10 +78,9 @@ def two_stage_qa(question: str):
                         }
                 
                 # 如果匹配到实体但格式不完全一致，使用KG第一个结果
-                correct = kg_answers[0]
-                print(f"【实体部分匹配】LLM实体 '{list(matched_entities)[0]}' 与KG相关，使用KG答案 '{correct}' 修正")
+                print(f"【实体部分匹配】LLM实体 '{list(matched_entities)[0]}' 与KG相关，使用KG答案集合修正")
                 return {
-                    "final_answer": correct,
+                    "final_answer": kg_answers,
                     "source": "corrected_by_kg_entity",
                     "llm_answer": llm_ans,
                     "kg_answers": kg_answers,
@@ -92,10 +91,9 @@ def two_stage_qa(question: str):
                 }
             else:
                 # LLM抽取了实体，但与KG结果不匹配，可能存在幻觉
-                correct = kg_answers[0]
-                print(f"【实体不匹配】LLM回答中的实体 {llm_all_entities} 与KG结果 {kg_answers} 不匹配，使用KG答案 '{correct}' 修正")
+                print(f"【实体不匹配】LLM回答中的实体 {llm_all_entities} 与KG结果 {kg_answers} 不匹配，使用KG答案集合修正")
                 return {
-                    "final_answer": correct,
+                    "final_answer": kg_answers,
                     "source": "corrected_by_kg_entity",
                     "llm_answer": llm_ans,
                     "kg_answers": kg_answers,
@@ -105,10 +103,9 @@ def two_stage_qa(question: str):
                 }
         else:
             # LLM回答中未提取到实体，使用KG结果修正
-            correct = kg_answers[0]
-            print(f"【未提取到实体】LLM回答中未找到已知实体，使用KG答案 '{correct}' 修正")
+            print(f"【未提取到实体】LLM回答中未找到已知实体，使用KG答案集合修正")
             return {
-                "final_answer": correct,
+                "final_answer": kg_answers,
                 "source": "corrected_by_kg",
                 "llm_answer": llm_ans,
                 "kg_answers": kg_answers,
